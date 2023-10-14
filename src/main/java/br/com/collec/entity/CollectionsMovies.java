@@ -13,7 +13,8 @@ public class CollectionsMovies {
     private List<Movies> movies;
     private Boolean published;
 
-    public CollectionsMovies(String name, String resume, List<Movies> movies, Boolean published) {
+    public CollectionsMovies(String id, String name, String resume, List<Movies> movies, Boolean published) {
+        this.id = id;
         this.name = name;
         this.resume = resume;
         this.movies = movies;
@@ -21,6 +22,7 @@ public class CollectionsMovies {
     }
 
     public CollectionsMovies() {
+
     }
 
     public String getId() {

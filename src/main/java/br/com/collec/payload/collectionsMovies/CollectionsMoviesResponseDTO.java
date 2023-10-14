@@ -12,6 +12,7 @@ public class CollectionsMoviesResponseDTO {
     private List<Movies> movies;
     private Boolean published;
 
+
     public CollectionsMoviesResponseDTO(String id, String name, String resume, List<Movies> movies, Boolean published) {
         this.id = id;
         this.name = name;

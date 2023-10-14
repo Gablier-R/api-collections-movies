@@ -9,6 +9,7 @@ import java.util.List;
 
 public class CollectionsMoviesDTO {
 
+    private String id;
     @NotBlank(message = "name must not be empty")
     @Size(min = 3, message = "name must be greater than 3 letters")
     private String name;
@@ -22,11 +23,20 @@ public class CollectionsMoviesDTO {
 
     private Boolean published;
 
-    public CollectionsMoviesDTO(String name, String resume, List<Movies> movies, Boolean published) {
+    public CollectionsMoviesDTO(String id, String name, String resume, List<Movies> movies, Boolean published) {
+        this.id = id;
         this.name = name;
         this.resume = resume;
         this.movies = movies;
         this.published = published;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -1,5 +1,6 @@
 package br.com.collec.service;
 
+import br.com.collec.payload.collectionsMovies.CollectionsMoviesResponseDTO;
 import br.com.collec.payload.user.ResponseDTO;
 import br.com.collec.payload.user.UserDTO;
 import br.com.collec.payload.user.UserResponseDTO;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-public record UserService(UserRepository userRepository, PasswordEncoder encoder) {
+public record UserService(UserRepository userRepository, PasswordEncoder encoder, CollectionsMoviesService collectionsMoviesService) {
 
     public UserResponseDTO saveUser(UserDTO userDTO){
 
@@ -34,7 +35,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
     public UserResponseDTO getUserById(String id){
 
         var user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found 1"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         return mapToResponseUser(user);
     }
@@ -42,7 +43,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
     public void deleteById(String id){
 
         userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found 2"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         userRepository.deleteById(id);
     }
@@ -54,7 +55,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
     public UserResponseDTO updateUser (String id, UserDTO userUpdateDTO){
 
         User user = userRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found 3 "));
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         return mapToResponseUser(userRepository.save(update(userUpdateDTO, user)));
     }
@@ -101,13 +102,19 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         return responseDTO;
     }
 
-    public UserResponseDTO mapToResponseUser(User user){
+
+
+    public UserResponseDTO mapToResponseUser(User user) {
+        List<CollectionsMoviesResponseDTO> collectionsMoviesDTOs = user.getCollectionsMovies().stream()
+                .map(collectionsMoviesService::mapToResponseCollectionsMovies)
+                .collect(Collectors.toList());
+
         return new UserResponseDTO(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getCollectionsMovies()
+                collectionsMoviesDTOs
         );
     }
 

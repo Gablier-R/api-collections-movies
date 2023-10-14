@@ -1,7 +1,8 @@
 package br.com.collec.payload.user;
 
 import br.com.collec.entity.CollectionsMovies;
-import org.springframework.data.mongodb.core.index.Indexed;
+import br.com.collec.payload.collectionsMovies.CollectionsMoviesDTO;
+import br.com.collec.payload.collectionsMovies.CollectionsMoviesResponseDTO;
 
 import java.util.List;
 
@@ -11,9 +12,10 @@ public class UserResponseDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private List<CollectionsMovies> collectionsMovies;
+    private List<CollectionsMoviesResponseDTO> collectionsMovies;
 
-    public UserResponseDTO(String id, String firstName, String lastName, String email, List<CollectionsMovies> collectionsMovies) {
+
+    public UserResponseDTO(String id, String firstName, String lastName, String email, List<CollectionsMoviesResponseDTO> collectionsMovies) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -53,11 +55,11 @@ public class UserResponseDTO {
         this.email = email;
     }
 
-    public List<CollectionsMovies> getCollectionsMovies() {
+    public List<CollectionsMoviesResponseDTO> getCollectionsMovies() {
         return collectionsMovies;
     }
 
-    public void setCollectionsMovies(List<CollectionsMovies> collectionsMovies) {
+    public void setCollectionsMovies(List<CollectionsMoviesResponseDTO> collectionsMovies) {
         this.collectionsMovies = collectionsMovies;
     }
 }

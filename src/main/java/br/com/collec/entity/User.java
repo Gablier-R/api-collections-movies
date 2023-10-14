@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "user")
@@ -16,7 +17,7 @@ public class User {
     @Indexed(unique = true)
     private String email;
     private String password;
-    private List<CollectionsMovies> collectionsMovies;
+    private List<CollectionsMovies> collectionsMovies = new ArrayList<>();
 
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
