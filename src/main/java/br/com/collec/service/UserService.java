@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
 
 @Service
 public record UserService(UserRepository userRepository, PasswordEncoder encoder) {
@@ -23,20 +22,25 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         if (userRepository.existsByEmail(userDTO.getEmail())){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "user already exists");
+                    "E-mail already registered");
         }
 
-        return mapToResponseUser(Optional.of(userRepository.save(createNewUser(userDTO))));
+        return mapToResponseUser(userRepository.save(createNewUser(userDTO)));
     }
 
     public UserResponseDTO getUserById(String id){
-        Optional<User> user = Optional.ofNullable(userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not exists")));
+
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not exists"));
 
         return mapToResponseUser(user);
     }
 
     public void deleteById(String id){
+
+        userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not exists"));
+
         userRepository.deleteById(id);
     }
 
@@ -45,8 +49,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
     }
 
     private ResponseDTO mapToPageableUsers(Pageable pageable){
-        Page<User> posts = userRepository.findAll(pageable);
-        return mapToResponseDTO(posts);
+        return mapToResponseDTO(userRepository.findAll(pageable));
     }
 
     private User createNewUser(UserCreateDTO user){
@@ -58,12 +61,12 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         );
     }
 
-    private UserResponseDTO mapToResponseUser(Optional<User> user){
+    private UserResponseDTO mapToResponseUser(User user){
         return new UserResponseDTO(
-                user.get().getFirstName(),
-                user.get().getLastName(),
-                user.get().getLastName(),
-                user.get().getEmail()
+                user.getFirstName(),
+                user.getLastName(),
+                user.getLastName(),
+                user.getEmail()
         );
     }
 

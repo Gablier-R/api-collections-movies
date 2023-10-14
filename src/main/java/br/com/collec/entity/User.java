@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection = "user")
 public class User {
 
@@ -11,10 +13,10 @@ public class User {
     private String id;
     private String firstName;
     private String lastName;
-
     @Indexed(unique = true)
     private String email;
     private String password;
+    private List<CollectionsMovies> collectionsMovies;
 
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
@@ -61,5 +63,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<CollectionsMovies> getCollectionsMovies() {
+        return collectionsMovies;
+    }
+
+    public void setCollectionsMovies(List<CollectionsMovies> collectionsMovies) {
+        this.collectionsMovies = collectionsMovies;
     }
 }
