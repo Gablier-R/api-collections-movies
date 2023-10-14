@@ -25,6 +25,8 @@ public record CollectionsMoviesService(CollectionsMoviesRepository collectionsMo
         return userRepository.save(user);
     }
 
+
+
     private static CollectionsMovies newCollectionsMovies(CollectionsMoviesDTO collectionsMoviesPatchDTO) {
         CollectionsMovies collectionsMovies = new CollectionsMovies();
         collectionsMovies.setName(collectionsMoviesPatchDTO.getName());

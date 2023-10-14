@@ -3,23 +3,17 @@ package br.com.collec.entity;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+import java.util.UUID;
 
 public class CollectionsMovies {
 
     @Id
-    private String id;
+    private String id = UUID.randomUUID().toString();
     private String name;
     private String resume;
     private List<Movies> movies;
     private Boolean published;
 
-    public CollectionsMovies(String id, String name, String resume, List<Movies> movies, Boolean published) {
-        this.id = id;
-        this.name = name;
-        this.resume = resume;
-        this.movies = movies;
-        this.published = published;
-    }
 
     public CollectionsMovies() {
 

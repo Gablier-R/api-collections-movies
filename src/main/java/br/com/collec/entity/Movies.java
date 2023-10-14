@@ -3,17 +3,21 @@ package br.com.collec.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 
+import java.util.UUID;
+
 public class Movies {
 
     @Id
-    private String id;
+    private String id = UUID.randomUUID().toString();
 
     @JsonProperty("url")
     private String url;
 
-    public Movies(String id, String url) {
-        this.id = id;
+    public Movies( String url) {
         this.url = url;
+    }
+
+    public Movies() {
     }
 
     public String getId() {

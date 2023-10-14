@@ -6,12 +6,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Document(collection = "user")
 public class User {
 
     @Id
-    private String id;
+    private String id = UUID.randomUUID().toString();
     private String firstName;
     private String lastName;
     @Indexed(unique = true)
@@ -24,15 +25,6 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-    }
-
-    public User(String id, String firstName, String lastName, String email, String password, List<CollectionsMovies> collectionsMovies) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.collectionsMovies = collectionsMovies;
     }
 
     public User() {
