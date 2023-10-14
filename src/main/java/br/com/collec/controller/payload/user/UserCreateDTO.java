@@ -1,10 +1,10 @@
-package br.com.collec.controller.payload;
+package br.com.collec.controller.payload.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class CreateUserDTO {
+public class UserCreateDTO {
 
     @NotBlank(message = "first name must not be empty")
     @Size(min = 3, message = "first name must be greater than 3 letters")
@@ -22,7 +22,7 @@ public class CreateUserDTO {
     @Size(min = 3, message = "first name must be greater than 3 letters")
     private String password;
 
-    public CreateUserDTO(String firstName, String lastName, String email, String password) {
+    public UserCreateDTO(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

@@ -1,13 +1,13 @@
-package br.com.collec.controller.payload;
+package br.com.collec.controller.payload.user;
 
-public class ResponseUserDTO {
+public class UserResponseDTO {
 
     private String id;
     private String firstName;
     private String lastName;
     private String email;
 
-    public ResponseUserDTO(String id, String firstName, String lastName, String email) {
+    public UserResponseDTO(String id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
