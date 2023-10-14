@@ -1,34 +1,32 @@
-package br.com.collec.entity;
+package br.com.collec.payload.collectionsMovies;
 
-import org.springframework.data.annotation.Id;
+import br.com.collec.entity.Movies;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public class CollectionsMovies {
+public class CollectionsMoviesDTO {
 
-    @Id
-    private String id;
+    @NotBlank(message = "name must not be empty")
+    @Size(min = 3, message = "name must be greater than 3 letters")
     private String name;
+
+    @NotBlank(message = "resume must not be empty")
+    @Size(min = 3, message = "resume must be greater than 10 letters")
     private String resume;
+
+    @NotEmpty(message = "resume must not be empty")
     private List<Movies> movies;
+
     private Boolean published;
 
-    public CollectionsMovies(String name, String resume, List<Movies> movies, Boolean published) {
+    public CollectionsMoviesDTO(String name, String resume, List<Movies> movies, Boolean published) {
         this.name = name;
         this.resume = resume;
         this.movies = movies;
         this.published = published;
-    }
-
-    public CollectionsMovies() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {

@@ -1,4 +1,4 @@
-package br.com.collec.controller.payload.user;
+package br.com.collec.payload.user;
 
 import br.com.collec.entity.CollectionsMovies;
 import jakarta.validation.constraints.Email;
@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public class UserCreateDTO {
+public class UserDTO {
 
     @NotBlank(message = "first name must not be empty")
     @Size(min = 3, message = "first name must be greater than 3 letters")
@@ -27,7 +27,7 @@ public class UserCreateDTO {
 
     private List<CollectionsMovies> collectionsMovies;
 
-    public UserCreateDTO(String firstName, String lastName, String email, String password) {
+    public UserDTO(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

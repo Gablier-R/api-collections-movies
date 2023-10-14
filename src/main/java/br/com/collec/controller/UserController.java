@@ -1,15 +1,13 @@
 package br.com.collec.controller;
 
-import br.com.collec.controller.payload.user.ResponseDTO;
-import br.com.collec.controller.payload.user.UserCreateDTO;
-import br.com.collec.controller.payload.user.UserResponseDTO;
+import br.com.collec.payload.user.ResponseDTO;
+import br.com.collec.payload.user.UserDTO;
+import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static br.com.collec.Utils.Constants.DEFAULT_PAGE_NUMBER;
 import static br.com.collec.Utils.Constants.DEFAULT_PAGE_SIZE;
@@ -18,9 +16,9 @@ import static br.com.collec.Utils.Constants.DEFAULT_PAGE_SIZE;
 @RequestMapping("api/user")
 public record UserController(UserService userService) {
 
-    @PostMapping("/create")
-    public UserResponseDTO createUser(@RequestBody @Valid UserCreateDTO user){
-        return userService.saveUser(user);
+    @PostMapping
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserDTO user){
+        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
     }
 
     @RequestMapping
@@ -38,6 +36,11 @@ public record UserController(UserService userService) {
     public ResponseEntity<Void> deleteUserById(@PathVariable String id){
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable String id, @Valid @RequestBody UserDTO userUpdateDTO){
+        return new ResponseEntity<>(userService.updateUser(id, userUpdateDTO), HttpStatus.OK);
     }
 
 }

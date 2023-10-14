@@ -1,4 +1,4 @@
-package br.com.collec.controller.payload.error;
+package br.com.collec.payload.error;
 
 import java.time.LocalDateTime;
 import java.util.List;

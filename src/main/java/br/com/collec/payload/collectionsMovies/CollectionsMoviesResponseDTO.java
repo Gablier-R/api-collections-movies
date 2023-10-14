@@ -1,26 +1,23 @@
-package br.com.collec.entity;
+package br.com.collec.payload.collectionsMovies;
 
-import org.springframework.data.annotation.Id;
+import br.com.collec.entity.Movies;
 
 import java.util.List;
 
-public class CollectionsMovies {
+public class CollectionsMoviesResponseDTO {
 
-    @Id
     private String id;
     private String name;
     private String resume;
     private List<Movies> movies;
     private Boolean published;
 
-    public CollectionsMovies(String name, String resume, List<Movies> movies, Boolean published) {
+    public CollectionsMoviesResponseDTO(String id, String name, String resume, List<Movies> movies, Boolean published) {
+        this.id = id;
         this.name = name;
         this.resume = resume;
         this.movies = movies;
         this.published = published;
-    }
-
-    public CollectionsMovies() {
     }
 
     public String getId() {
