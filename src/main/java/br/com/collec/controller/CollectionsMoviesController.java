@@ -3,6 +3,7 @@ package br.com.collec.controller;
 import br.com.collec.entity.User;
 import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
+import br.com.collec.payload.collectionsMovies.CollectionsUpdateDTO;
 import br.com.collec.service.CollectionsMoviesService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.List;
 public record CollectionsMoviesController(CollectionsMoviesService collectionsMoviesService) {
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<User> addCollectionsMovies(@PathVariable String userId,
+    public ResponseEntity<User> addCollections(@PathVariable String userId,
                                                      @RequestBody CollectionsDataDTO collectionsMoviesPatchDTO) {
 
         return new ResponseEntity<>(collectionsMoviesService.saveCollectionsInUser(userId, collectionsMoviesPatchDTO), HttpStatus.OK);
@@ -38,6 +39,25 @@ public record CollectionsMoviesController(CollectionsMoviesService collectionsMo
     ) {
         return new ResponseEntity<>(collectionsMoviesService.updateCollectionPublishedStatus(userId, collectionId, false), HttpStatus.OK);
     }
+
+    @PatchMapping("/{userId}/{collectionId}")
+    public ResponseEntity<CollectionsResponseDTO> updateCollection(
+            @PathVariable String userId,
+            @PathVariable String collectionId,
+            @RequestBody CollectionsUpdateDTO updateRequest
+    ) {
+        return new ResponseEntity<>(collectionsMoviesService.updateCollection(userId, collectionId, updateRequest), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{userId}/{collectionId}")
+    public ResponseEntity<Void> deleteCollection(
+            @PathVariable String userId,
+            @PathVariable String collectionId
+    ) {
+        collectionsMoviesService.deleteCollection(userId, collectionId);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 }

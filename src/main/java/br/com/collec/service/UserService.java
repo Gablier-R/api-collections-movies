@@ -102,8 +102,6 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         return responseDTO;
     }
 
-
-
     public UserResponseDTO mapToResponseUser(User user) {
         List<CollectionsResponseDTO> collectionsMoviesDTOs = user.getCollectionsMovies().stream()
                 .map(collectionsMoviesService::mapToResponseCollectionsMovies)
