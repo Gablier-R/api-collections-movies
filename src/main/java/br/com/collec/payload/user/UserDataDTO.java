@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public class UserDTO {
+public class UserDataDTO {
 
     @NotBlank(message = "first name must not be empty")
     @Size(min = 3, message = "first name must be greater than 3 letters")
@@ -27,7 +27,7 @@ public class UserDTO {
 
     private List<CollectionsMovies> collectionsMovies;
 
-    public UserDTO(String firstName, String lastName, String email, String password) {
+    public UserDataDTO(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

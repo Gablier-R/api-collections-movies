@@ -1,7 +1,7 @@
 package br.com.collec.controller;
 
-import br.com.collec.payload.user.ResponseDTO;
-import br.com.collec.payload.user.UserDTO;
+import br.com.collec.payload.user.UserResponsePage;
+import br.com.collec.payload.user.UserDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.service.UserService;
 import jakarta.validation.Valid;
@@ -17,13 +17,13 @@ import static br.com.collec.Utils.Constants.DEFAULT_PAGE_SIZE;
 public record UserController(UserService userService) {
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserDTO user){
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserDataDTO user){
         return new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
     }
 
     @RequestMapping
-    public ResponseEntity<ResponseDTO> getAllUsers(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-                                                   @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
+    public ResponseEntity<UserResponsePage> getAllUsers(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+                                                        @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
         return new ResponseEntity<>(userService.queryUsers(pageNo, pageSize), HttpStatus.OK);
     }
 
@@ -39,7 +39,7 @@ public record UserController(UserService userService) {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable String id, @Valid @RequestBody UserDTO userUpdateDTO){
+    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable String id, @Valid @RequestBody UserDataDTO userUpdateDTO){
         return new ResponseEntity<>(userService.updateUser(id, userUpdateDTO), HttpStatus.OK);
     }
 

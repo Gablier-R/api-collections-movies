@@ -1,11 +1,9 @@
 package br.com.collec.payload.user;
 
 
-import br.com.collec.entity.User;
-
 import java.util.List;
 
-public class ResponseDTO{
+public class UserResponsePage {
     private List<UserResponseDTO> content;
     private int pageNo;
     private int pageSize;
@@ -13,7 +11,7 @@ public class ResponseDTO{
     private long totalElements;
     private boolean last;
 
-    public ResponseDTO(List<UserResponseDTO> content, int pageNo, int pageSize, int totalPages, long totalElements, boolean last) {
+    public UserResponsePage(List<UserResponseDTO> content, int pageNo, int pageSize, int totalPages, long totalElements, boolean last) {
         this.content = content;
         this.pageNo = pageNo;
         this.pageSize = pageSize;
@@ -22,7 +20,7 @@ public class ResponseDTO{
         this.last = last;
     }
 
-    public ResponseDTO() {
+    public UserResponsePage() {
     }
 
     public List<UserResponseDTO> getContent() {

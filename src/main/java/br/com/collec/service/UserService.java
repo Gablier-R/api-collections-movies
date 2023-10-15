@@ -1,8 +1,8 @@
 package br.com.collec.service;
 
-import br.com.collec.payload.collectionsMovies.CollectionsMoviesResponseDTO;
-import br.com.collec.payload.user.ResponseDTO;
-import br.com.collec.payload.user.UserDTO;
+import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
+import br.com.collec.payload.user.UserResponsePage;
+import br.com.collec.payload.user.UserDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.entity.User;
 import br.com.collec.repository.UserRepository;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public record UserService(UserRepository userRepository, PasswordEncoder encoder, CollectionsMoviesService collectionsMoviesService) {
 
-    public UserResponseDTO saveUser(UserDTO userDTO){
+    public UserResponseDTO saveUser(UserDataDTO userDTO){
 
         if (userRepository.existsByEmail(userDTO.getEmail())){
             throw new ResponseStatusException(
@@ -48,11 +48,11 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         userRepository.deleteById(id);
     }
 
-    public ResponseDTO queryUsers(int pageNo, int pageSize) {
+    public UserResponsePage queryUsers(int pageNo, int pageSize) {
         return mapToPageableUsers(PageRequest.of(pageNo, pageSize));
     }
 
-    public UserResponseDTO updateUser (String id, UserDTO userUpdateDTO){
+    public UserResponseDTO updateUser (String id, UserDataDTO userUpdateDTO){
 
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -60,7 +60,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         return mapToResponseUser(userRepository.save(update(userUpdateDTO, user)));
     }
 
-    private User update(UserDTO userUpdateDTO, User user) {
+    private User update(UserDataDTO userUpdateDTO, User user) {
         user.setFirstName(userUpdateDTO.getFirstName());
         user.setLastName(userUpdateDTO.getLastName());
         user.setEmail(userUpdateDTO.getEmail());
@@ -69,7 +69,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         return user;
     }
 
-    private User createNewUser(UserDTO user){
+    private User createNewUser(UserDataDTO user){
         return new User(
                 user.getFirstName(),
                 user.getLastName(),
@@ -78,7 +78,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         );
     }
 
-    private ResponseDTO mapToPageableUsers(Pageable pageable){
+    private UserResponsePage mapToPageableUsers(Pageable pageable){
         Page<User> users = userRepository.findAll(pageable);
 
         List<User> listOfUser = users.getContent();
@@ -89,9 +89,9 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
 
     }
 
-    private ResponseDTO mapToResponse(List<UserResponseDTO> content, Page<User> users) {
+    private UserResponsePage mapToResponse(List<UserResponseDTO> content, Page<User> users) {
 
-        ResponseDTO responseDTO = new ResponseDTO();
+        UserResponsePage responseDTO = new UserResponsePage();
         responseDTO.setContent(content);
         responseDTO.setPageNo(users.getNumber());
         responseDTO.setPageSize(users.getSize());
@@ -105,7 +105,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
 
 
     public UserResponseDTO mapToResponseUser(User user) {
-        List<CollectionsMoviesResponseDTO> collectionsMoviesDTOs = user.getCollectionsMovies().stream()
+        List<CollectionsResponseDTO> collectionsMoviesDTOs = user.getCollectionsMovies().stream()
                 .map(collectionsMoviesService::mapToResponseCollectionsMovies)
                 .collect(Collectors.toList());
 
