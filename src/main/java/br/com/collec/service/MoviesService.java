@@ -15,18 +15,17 @@ public record MoviesService(UserRepository userRepository) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Impossible to perform this operation: User does not exist"));
 
-        if (user != null) {
-            CollectionsMovies collectionWithMovie = user.getCollectionsMovies().stream()
-                    .filter(collection -> collection.getId().equals(collectionId))
-                    .findFirst()
-                    .orElse(null);
+        CollectionsMovies collectionToUpdate = user.getCollectionsMovies().stream()
+                .filter(collection -> collection.getId().equals(collectionId))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Impossible to perform this operation: Collection does not exist"));
 
-            if (collectionWithMovie != null) {
-                collectionWithMovie.getMovies().removeIf(movie -> movie.getId().equals(movieId));
+            if (collectionToUpdate != null) {
+                collectionToUpdate.getMovies().removeIf(movie -> movie.getId().equals(movieId));
                 userRepository.save(user);
             }
         }
     }
 
 
-}
+
