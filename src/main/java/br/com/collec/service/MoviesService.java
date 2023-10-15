@@ -14,45 +14,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public record MoviesService(UserRepository userRepository, CollectionsMoviesService collectionsMoviesService) {
+public record MoviesService(UserRepository userRepository, ServiceMap serviceMap) {
 
+    public CollectionsResponseDTO addMovieToCollection(String userId, String collectionId, MoviesDataDTO movieRequest) {
+
+        userAndCollection addMoviesInCollection = verifyUserAndCollection(userId, collectionId);
+
+        addMoviesInCollection.collections.getMovies().add(new Movies(movieRequest.getUrl()));
+
+        userRepository.save(addMoviesInCollection.user());
+
+        return serviceMap.mapToResponseCollectionsMovies(addMoviesInCollection.collections);
+    }
     public void deleteMovie(String userId, String collectionId, String movieId) {
 
         userAndCollection result = verifyUserAndCollection(userId, collectionId);
 
-        if (result.collectionToUpdate() != null) {
-                result.collectionToUpdate().getMovies().removeIf(movie -> movie.getId().equals(movieId));
+        if (result.collections != null) {
+                result.collections.getMovies().removeIf(movie -> movie.getId().equals(movieId));
                 userRepository.save(result.user());
             }
         }
 
-    public CollectionsResponseDTO addMovieToCollection(String userId, String collectionId, MoviesDataDTO movieRequest) {
-        // Obter o usuário
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-        // Encontrar a coleção
-        CollectionsMovies collection = user.getCollectionsMovies().stream()
-                .filter(c -> c.getId().equals(collectionId))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collection not found"));
-
-        // Adicionar um único filme à coleção existente
-        collection.getMovies().add(new Movies(movieRequest.getUrl()));
-
-        // Salvar as alterações
-        userRepository.save(user);
-
-        // Mapear e retornar a coleção atualizada
-        return collectionsMoviesService.mapToResponseCollectionsMovies(collection);
-    }
-
-
-
-    private record userAndCollection(User user, CollectionsMovies collectionToUpdate) {
-    }
-
     private userAndCollection verifyUserAndCollection(String userId, String collectionId) {
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Impossible to perform this operation: User does not exist"));
 
@@ -61,6 +46,9 @@ public record MoviesService(UserRepository userRepository, CollectionsMoviesServ
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Impossible to perform this operation: Collection does not exist"));
         return new userAndCollection(user, collectionToUpdate);
+    }
+
+    private record userAndCollection(User user, CollectionsMovies collections) {
     }
 
 }

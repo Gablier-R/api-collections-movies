@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-public record UserService(UserRepository userRepository, PasswordEncoder encoder, CollectionsMoviesService collectionsMoviesService) {
+public record UserService(UserRepository userRepository, PasswordEncoder encoder,ServiceMap serviceMap) {
 
     public UserResponseDTO saveUser(UserDataDTO userDTO){
 
@@ -29,15 +29,12 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
                     "E-mail already registered");
         }
 
-        return mapToResponseUser(userRepository.save(createNewUser(userDTO)));
+        return serviceMap.mapToResponseUser(userRepository.save(createNewUser(userDTO)));
     }
 
     public UserResponseDTO getUserById(String id){
 
-        var user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-        return mapToResponseUser(user);
+        return serviceMap.mapToResponseUser(verifyUserById(id));
     }
 
     public void deleteById(String id){
@@ -48,16 +45,14 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         userRepository.deleteById(id);
     }
 
-    public UserResponsePage queryUsers(int pageNo, int pageSize) {
-        return mapToPageableUsers(PageRequest.of(pageNo, pageSize));
-    }
-
     public UserResponseDTO updateUser (String id, UserDataDTO userUpdateDTO){
 
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return serviceMap.mapToResponseUser(userRepository.save(update(userUpdateDTO, verifyUserById(id))));
+    }
 
-        return mapToResponseUser(userRepository.save(update(userUpdateDTO, user)));
+    private User verifyUserById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     private User update(UserDataDTO userUpdateDTO, User user) {
@@ -78,12 +73,18 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         );
     }
 
+    public UserResponsePage queryUsers(int pageNo, int pageSize) {
+        return mapToPageableUsers(PageRequest.of(pageNo, pageSize));
+    }
+
     private UserResponsePage mapToPageableUsers(Pageable pageable){
         Page<User> users = userRepository.findAll(pageable);
 
         List<User> listOfUser = users.getContent();
 
-        List<UserResponseDTO> content = listOfUser.stream().map(this::mapToResponseUser).collect(Collectors.toList());
+        List<UserResponseDTO> content = listOfUser.stream()
+                .map(serviceMap::mapToResponseUser)
+                .collect(Collectors.toList());
 
         return mapToResponse (content, users);
 
@@ -102,19 +103,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         return responseDTO;
     }
 
-    public UserResponseDTO mapToResponseUser(User user) {
-        List<CollectionsResponseDTO> collectionsMoviesDTOs = user.getCollectionsMovies().stream()
-                .map(collectionsMoviesService::mapToResponseCollectionsMovies)
-                .collect(Collectors.toList());
 
-        return new UserResponseDTO(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                collectionsMoviesDTOs
-        );
-    }
 
 
 }

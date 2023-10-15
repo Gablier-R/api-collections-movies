@@ -39,7 +39,7 @@ public record UserController(UserService userService) {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable String id, @Valid @RequestBody UserDataDTO userUpdateDTO){
+    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable String id, @RequestBody @Valid UserDataDTO userUpdateDTO){
         return new ResponseEntity<>(userService.updateUser(id, userUpdateDTO), HttpStatus.OK);
     }
 

@@ -5,8 +5,14 @@ import br.com.collec.entity.User;
 import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.entity.CollectionsMovies;
+import br.com.collec.payload.collectionsMovies.CollectionsResponsePage;
 import br.com.collec.payload.collectionsMovies.CollectionsUpdateDTO;
+import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,83 +21,97 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public record CollectionsMoviesService( UserRepository userRepository) {
+public record CollectionsMoviesService( UserRepository userRepository, ServiceMap serviceMap) {
 
-    public User saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
+    public UserResponseDTO saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
 
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        var user = verifyUserById(userId);
 
         user.getCollectionsMovies().add(newCollectionsMovies(collectionsMoviesPatchDTO));
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        return serviceMap.mapToResponseUser(savedUser);
     }
 
-    public List<CollectionsResponseDTO> getAllPublishedCollections() {
-        List<User> allUsers = userRepository.findAll();
+    public CollectionsResponsePage queryCollectionsPublished(int pageNo, int pageSize) {
+        return mapToPageableCollections(PageRequest.of(pageNo, pageSize));
+    }
 
-        return allUsers.stream()
+    public CollectionsResponsePage mapToPageableCollections(Pageable pageable) {
+        Page<User> usersPage = userRepository.findAll(pageable);
+
+        List<CollectionsMovies> collectionsList = usersPage.stream()
                 .flatMap(user -> user.getCollectionsMovies().stream())
                 .filter(CollectionsMovies::getPublished)
-                .map(this::mapToResponseCollectionsMovies)
+                .toList();
+
+        List<CollectionsResponseDTO> content = collectionsList.stream()
+                .map(serviceMap::mapToResponseCollectionsMovies)
                 .collect(Collectors.toList());
+
+        return mapToResponse(content, usersPage);
     }
 
-    public CollectionsResponseDTO updateCollectionPublishedStatus(String userId, String collectionId, boolean published) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    private CollectionsResponsePage mapToResponse(List<CollectionsResponseDTO> content, Page<User> usersPage) {
 
-        CollectionsMovies collectionToUpdate = user.getCollectionsMovies().stream()
-                .filter(collection -> collection.getId().equals(collectionId))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collection not found"));
+        CollectionsResponsePage responseDTO = new CollectionsResponsePage();
+        responseDTO.setContent(content);
+        responseDTO.setPageNo(usersPage.getNumber());
+        responseDTO.setPageSize(usersPage.getSize());
+        responseDTO.setTotalElements(usersPage.getTotalElements());
+        responseDTO.setTotalPages(usersPage.getTotalPages());
+        responseDTO.setLast(usersPage.isLast());
+
+        return responseDTO;
+    }
+
+
+
+
+    public CollectionsResponseDTO updateCollectionPublishedStatus(String userId, String collectionId, boolean published) {
+
+        var user = verifyUserById(userId);
+
+        CollectionsMovies collectionToUpdate = verifyCollection(collectionId, user);
 
         collectionToUpdate.setPublished(published);
         userRepository.save(user);
 
-        return mapToResponseCollectionsMovies(collectionToUpdate);
+        return serviceMap.mapToResponseCollectionsMovies(collectionToUpdate);
     }
 
     public CollectionsResponseDTO updateCollection(String userId, String collectionId, CollectionsUpdateDTO updateRequest) {
-        // Obter o usuário
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        // Encontrar a coleção
-        CollectionsMovies collection = user.getCollectionsMovies().stream()
-                .filter(c -> c.getId().equals(collectionId))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collection not found"));
+        var user = verifyUserById(userId);
 
-        // Atualizar os campos da coleção
-        if (updateRequest.getName() != null) {
-            collection.setName(updateRequest.getName());
-        }
+        var collection = verifyCollection(collectionId, user);
 
-        if (updateRequest.getResume() != null) {
-            collection.setResume(updateRequest.getResume());
-        }
-
-        // Salvar as alterações
         userRepository.save(user);
 
-        // Mapear e retornar a coleção atualizada
-        return mapToResponseCollectionsMovies(collection);
+        return serviceMap.mapToResponseCollectionsMovies(collection);
     }
 
     public void deleteCollection(String userId, String collectionId) {
-        // Obter o usuário
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        // Remover a coleção pelo ID
+        var user = verifyUserById(userId);
+
         user.getCollectionsMovies().removeIf(collection -> collection.getId().equals(collectionId));
 
-        // Salvar as alterações
         userRepository.save(user);
     }
 
+    private User verifyUserById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
 
+    private CollectionsMovies verifyCollection(String collectionId, User user) {
+        return user.getCollectionsMovies().stream()
+                .filter(collection -> collection.getId().equals(collectionId))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collection not found"));
+    }
 
     private static CollectionsMovies newCollectionsMovies(CollectionsDataDTO collectionsMoviesPatchDTO) {
         CollectionsMovies collectionsMovies = new CollectionsMovies();
@@ -102,14 +122,5 @@ public record CollectionsMoviesService( UserRepository userRepository) {
     }
 
 
-    public CollectionsResponseDTO mapToResponseCollectionsMovies(CollectionsMovies collectionsMovies){
-        return new CollectionsResponseDTO(
-                collectionsMovies.getId(),
-                collectionsMovies.getName(),
-                collectionsMovies.getResume(),
-                collectionsMovies.getMovies(),
-                collectionsMovies.getPublished()
-        );
-    }
 
 }
