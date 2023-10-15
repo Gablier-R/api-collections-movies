@@ -20,13 +20,11 @@ public class CollectionsDataDTO {
     @NotEmpty(message = "resume must not be empty")
     private List<Movies> movies;
 
-    private boolean isPublished;
 
-    public CollectionsDataDTO(String name, String resume, List<Movies> movies, Boolean isPublished) {
+    public CollectionsDataDTO(String name, String resume, List<Movies> movies) {
         this.name = name;
         this.resume = resume;
         this.movies = movies;
-        this.isPublished = isPublished;
     }
 
     public String getName() {
@@ -53,11 +51,4 @@ public class CollectionsDataDTO {
         this.movies = movies;
     }
 
-    public Boolean getPublished() {
-        return isPublished;
-    }
-
-    public void setPublished(Boolean published) {
-        isPublished = published;
-    }
 }

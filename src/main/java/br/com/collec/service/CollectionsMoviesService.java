@@ -5,7 +5,6 @@ import br.com.collec.entity.User;
 import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.entity.CollectionsMovies;
-import br.com.collec.repository.CollectionsMoviesRepository;
 import br.com.collec.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public record CollectionsMoviesService(CollectionsMoviesRepository collectionsMoviesRepository, UserRepository userRepository) {
+public record CollectionsMoviesService( UserRepository userRepository) {
 
     public User saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
 
@@ -59,7 +58,6 @@ public record CollectionsMoviesService(CollectionsMoviesRepository collectionsMo
         collectionsMovies.setName(collectionsMoviesPatchDTO.getName());
         collectionsMovies.setResume(collectionsMoviesPatchDTO.getResume());
         collectionsMovies.setMovies(collectionsMoviesPatchDTO.getMovies());
-        collectionsMovies.setPublished(collectionsMoviesPatchDTO.getPublished());
         return collectionsMovies;
     }
 
