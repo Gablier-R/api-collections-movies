@@ -11,10 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public record CollectionsMoviesService(CollectionsMoviesRepository collectionsMoviesRepository, UserRepository userRepository) {
 
-    public User updateCollectionsMovies(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
+    public User saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
 
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -22,6 +25,31 @@ public record CollectionsMoviesService(CollectionsMoviesRepository collectionsMo
         user.getCollectionsMovies().add(newCollectionsMovies(collectionsMoviesPatchDTO));
 
         return userRepository.save(user);
+    }
+
+    public List<CollectionsResponseDTO> getAllPublishedCollections() {
+        List<User> allUsers = userRepository.findAll();
+
+        return allUsers.stream()
+                .flatMap(user -> user.getCollectionsMovies().stream())
+                .filter(CollectionsMovies::getPublished)
+                .map(this::mapToResponseCollectionsMovies)
+                .collect(Collectors.toList());
+    }
+
+    public CollectionsResponseDTO updateCollectionPublishedStatus(String userId, String collectionId, boolean published) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        CollectionsMovies collectionToUpdate = user.getCollectionsMovies().stream()
+                .filter(collection -> collection.getId().equals(collectionId))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Collection not found"));
+
+        collectionToUpdate.setPublished(published);
+        userRepository.save(user);
+
+        return mapToResponseCollectionsMovies(collectionToUpdate);
     }
 
 

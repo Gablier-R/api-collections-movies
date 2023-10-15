@@ -10,15 +10,15 @@ public class CollectionsResponseDTO {
     private String name;
     private String resume;
     private List<Movies> movies;
-    private Boolean published;
+    private boolean isPublished;
 
 
-    public CollectionsResponseDTO(String id, String name, String resume, List<Movies> movies, Boolean published) {
+    public CollectionsResponseDTO(String id, String name, String resume, List<Movies> movies, Boolean isPublished) {
         this.id = id;
         this.name = name;
         this.resume = resume;
         this.movies = movies;
-        this.published = published;
+        this.isPublished = isPublished;
     }
 
     public String getId() {
@@ -54,10 +54,10 @@ public class CollectionsResponseDTO {
     }
 
     public Boolean getPublished() {
-        return published;
+        return isPublished;
     }
 
     public void setPublished(Boolean published) {
-        this.published = published;
+        isPublished = published;
     }
 }

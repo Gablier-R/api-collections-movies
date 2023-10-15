@@ -12,7 +12,7 @@ public class CollectionsMovies {
     private String name;
     private String resume;
     private List<Movies> movies;
-    private Boolean published;
+    private boolean isPublished;
 
 
     public CollectionsMovies() {
@@ -52,10 +52,10 @@ public class CollectionsMovies {
     }
 
     public Boolean getPublished() {
-        return published;
+        return isPublished;
     }
 
     public void setPublished(Boolean published) {
-        this.published = published;
+        isPublished = published;
     }
 }

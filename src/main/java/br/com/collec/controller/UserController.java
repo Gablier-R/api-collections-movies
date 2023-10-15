@@ -21,13 +21,13 @@ public record UserController(UserService userService) {
         return new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
     }
 
-    @RequestMapping
+    @GetMapping
     public ResponseEntity<UserResponsePage> getAllUsers(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
                                                         @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
         return new ResponseEntity<>(userService.queryUsers(pageNo, pageSize), HttpStatus.OK);
     }
 
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO>  getUserByEmail(@PathVariable String id){
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
