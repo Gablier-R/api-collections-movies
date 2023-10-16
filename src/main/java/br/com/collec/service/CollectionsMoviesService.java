@@ -31,7 +31,7 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
         return serviceMap.mapToResponseForAll(savedUser);
     }
 
-    //Metodo pode ser alterado para somente collectionId
+    //Metodo pode ser alterado para somente collectionId?
     public CollectionsResponseDTO getPublishedCollectionById(String userId, String collectionId) {
         User user = verifyUserById(userId);
 
