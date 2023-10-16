@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static br.com.collec.Utils.Constants.DEFAULT_PAGE_NUMBER;
 import static br.com.collec.Utils.Constants.DEFAULT_PAGE_SIZE;
 
+
 @RestController
 @RequestMapping("v1/api")
 public record AllResponseController(UserService userService) {
