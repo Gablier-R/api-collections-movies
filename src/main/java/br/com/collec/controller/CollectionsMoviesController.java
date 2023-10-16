@@ -1,20 +1,15 @@
 package br.com.collec.controller;
 
-import br.com.collec.entity.User;
 import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponsePage;
 import br.com.collec.payload.collectionsMovies.CollectionsUpdateDTO;
 import br.com.collec.payload.user.UserResponseDTO;
-import br.com.collec.payload.user.UserResponsePage;
 import br.com.collec.service.CollectionsMoviesService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 import static br.com.collec.Utils.Constants.DEFAULT_PAGE_NUMBER;
 import static br.com.collec.Utils.Constants.DEFAULT_PAGE_SIZE;
@@ -31,17 +26,18 @@ public record CollectionsMoviesController(CollectionsMoviesService collectionsMo
 
     @GetMapping
     public ResponseEntity<CollectionsResponsePage> getAllCollectionsPublished(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-                                                               @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
-        return new ResponseEntity<>(collectionsMoviesService.queryCollectionsPublished(pageNo, pageSize), HttpStatus.OK);
+                                                                              @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
+        return new ResponseEntity<>(collectionsMoviesService.mapToPageableCollections(pageNo, pageSize), HttpStatus.OK);
     }
 
-    @PatchMapping("/publish/{userId}/{collectionId}")
+
+    @GetMapping("/{userId}/{collectionId}")
     public ResponseEntity<CollectionsResponseDTO> publishCollection(@PathVariable String userId, @PathVariable String collectionId
     ) {
-        return new ResponseEntity<>(collectionsMoviesService.updateCollectionPublishedStatus(userId, collectionId, true), HttpStatus.OK);
+        return new ResponseEntity<>(collectionsMoviesService.getPublishedCollectionById(userId, collectionId), HttpStatus.OK);
     }
 
-    @PatchMapping("/unpublish/{userId}/{collectionId}")
+    @PatchMapping("/unpublished/{userId}/{collectionId}")
     public ResponseEntity<CollectionsResponseDTO> unpublishCollection(@PathVariable String userId, @PathVariable String collectionId
     ) {
         return new ResponseEntity<>(collectionsMoviesService.updateCollectionPublishedStatus(userId, collectionId, false), HttpStatus.OK);
@@ -51,7 +47,7 @@ public record CollectionsMoviesController(CollectionsMoviesService collectionsMo
     public ResponseEntity<CollectionsResponseDTO> updateCollection(
             @PathVariable String userId,
             @PathVariable String collectionId,
-            @RequestBody CollectionsUpdateDTO updateRequest
+            @Valid @RequestBody CollectionsUpdateDTO updateRequest
     ) {
         return new ResponseEntity<>(collectionsMoviesService.updateCollection(userId, collectionId, updateRequest), HttpStatus.OK);
     }

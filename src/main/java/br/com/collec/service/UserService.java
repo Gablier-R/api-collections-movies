@@ -1,10 +1,11 @@
 package br.com.collec.service;
 
-import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
-import br.com.collec.payload.user.UserResponsePage;
+import br.com.collec.payload.AllResponseDTO;
+import br.com.collec.payload.user.Custom;
 import br.com.collec.payload.user.UserDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.entity.User;
+import br.com.collec.payload.user.UserResponsePage;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,8 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public record UserService(UserRepository userRepository, PasswordEncoder encoder,ServiceMap serviceMap) {
 
-    public UserResponseDTO saveUser(UserDataDTO userDTO){
-
+    public UserResponsePage saveUser(UserDataDTO userDTO){
         if (userRepository.existsByEmail(userDTO.getEmail())){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -32,7 +32,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         return serviceMap.mapToResponseUser(userRepository.save(createNewUser(userDTO)));
     }
 
-    public UserResponseDTO getUserById(String id){
+    public UserResponsePage getUserById(String id){
 
         return serviceMap.mapToResponseUser(verifyUserById(id));
     }
@@ -47,7 +47,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
 
     public UserResponseDTO updateUser (String id, UserDataDTO userUpdateDTO){
 
-        return serviceMap.mapToResponseUser(userRepository.save(update(userUpdateDTO, verifyUserById(id))));
+        return serviceMap.mapToResponseForAll(userRepository.save(update(userUpdateDTO, verifyUserById(id))));
     }
 
     private User verifyUserById(String id) {
@@ -73,38 +73,32 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         );
     }
 
-    public UserResponsePage queryUsers(int pageNo, int pageSize) {
-        return mapToPageableUsers(PageRequest.of(pageNo, pageSize));
+
+    public Custom queryAllUsersPageable(int pageNo, int pageSize) {
+        Page<User> users = userRepository.findAll(PageRequest.of(pageNo, pageSize));
+
+        List<UserResponsePage> content = users.getContent().stream()
+                .map(serviceMap::mapToResponseUser)
+                .collect(Collectors.toList());
+
+        return serviceMap.mapToResponseUserPage(content, users);
     }
 
-    private UserResponsePage mapToPageableUsers(Pageable pageable){
-        Page<User> users = userRepository.findAll(pageable);
+
+    //Mets for fetch all resource
+
+    public AllResponseDTO mapToPageableAllResource(int pageNo, int pageSize){
+        Page<User> users = userRepository.findAll(PageRequest.of(pageNo, pageSize));
 
         List<User> listOfUser = users.getContent();
 
         List<UserResponseDTO> content = listOfUser.stream()
-                .map(serviceMap::mapToResponseUser)
+                .map(serviceMap::mapToResponseForAll)
                 .collect(Collectors.toList());
 
-        return mapToResponse (content, users);
+        return serviceMap.mapToResponseAllResource(content, users);
 
     }
-
-    private UserResponsePage mapToResponse(List<UserResponseDTO> content, Page<User> users) {
-
-        UserResponsePage responseDTO = new UserResponsePage();
-        responseDTO.setContent(content);
-        responseDTO.setPageNo(users.getNumber());
-        responseDTO.setPageSize(users.getSize());
-        responseDTO.setTotalElements(users.getTotalElements());
-        responseDTO.setTotalPages(users.getTotalPages());
-        responseDTO.setLast(users.isLast());
-
-        return responseDTO;
-    }
-
-
-
 
 }
 

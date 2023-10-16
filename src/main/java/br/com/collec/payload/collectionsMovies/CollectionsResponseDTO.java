@@ -1,6 +1,7 @@
 package br.com.collec.payload.collectionsMovies;
 
 import br.com.collec.entity.Movies;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 

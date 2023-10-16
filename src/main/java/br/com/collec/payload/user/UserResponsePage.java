@@ -1,75 +1,48 @@
 package br.com.collec.payload.user;
 
-
-import java.util.List;
-
 public class UserResponsePage {
-    private List<UserResponseDTO> content;
-    private int pageNo;
-    private int pageSize;
-    private int totalPages;
-    private long totalElements;
-    private boolean last;
 
-    public UserResponsePage(List<UserResponseDTO> content, int pageNo, int pageSize, int totalPages, long totalElements, boolean last) {
-        this.content = content;
-        this.pageNo = pageNo;
-        this.pageSize = pageSize;
-        this.totalPages = totalPages;
-        this.totalElements = totalElements;
-        this.last = last;
+    private String id;
+    private String firstName;
+    private String lastName;
+    private String email;
+
+    public UserResponsePage(String id, String firstName, String lastName, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
     }
 
-    public UserResponsePage() {
+    public String getId() {
+        return id;
     }
 
-    public List<UserResponseDTO> getContent() {
-        return content;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setContent(List<UserResponseDTO> content) {
-        this.content = content;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public int getPageNo() {
-        return pageNo;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public void setPageNo(int pageNo) {
-        this.pageNo = pageNo;
+    public String getLastName() {
+        return lastName;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public String getEmail() {
+        return email;
     }
 
-    public int getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public long getTotalElements() {
-        return totalElements;
-    }
-
-    public void setTotalElements(long totalElements) {
-        this.totalElements = totalElements;
-    }
-
-    public boolean isLast() {
-        return last;
-    }
-
-    public void setLast(boolean last) {
-        this.last = last;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
-
-

@@ -10,7 +10,6 @@ import br.com.collec.payload.collectionsMovies.CollectionsUpdateDTO;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,15 +30,25 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
 
         User savedUser = userRepository.save(user);
 
-        return serviceMap.mapToResponseUser(savedUser);
+        return serviceMap.mapToResponseForAll(savedUser);
     }
 
-    public CollectionsResponsePage queryCollectionsPublished(int pageNo, int pageSize) {
-        return mapToPageableCollections(PageRequest.of(pageNo, pageSize));
+    //Metodo pode ser alterado para somente collectionId
+    public CollectionsResponseDTO getPublishedCollectionById(String userId, String collectionId) {
+        User user = verifyUserById(userId);
+
+        CollectionsMovies collection = verifyCollection(collectionId, user);
+
+        if (!collection.getPublished()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Collection is not published");
+        }
+
+        return serviceMap.mapToResponseCollectionsMovies(collection);
     }
 
-    public CollectionsResponsePage mapToPageableCollections(Pageable pageable) {
-        Page<User> usersPage = userRepository.findAll(pageable);
+
+    public CollectionsResponsePage mapToPageableCollections(int pageNo, int pageSize) {
+        Page<User> usersPage = userRepository.findAll(PageRequest.of(pageNo, pageSize));
 
         List<CollectionsMovies> collectionsList = usersPage.stream()
                 .flatMap(user -> user.getCollectionsMovies().stream())
@@ -82,15 +91,18 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
     }
 
     public CollectionsResponseDTO updateCollection(String userId, String collectionId, CollectionsUpdateDTO updateRequest) {
-
         var user = verifyUserById(userId);
 
         var collection = verifyCollection(collectionId, user);
+
+        collection.setName(updateRequest.getName());
+        collection.setResume(updateRequest.getResume());
 
         userRepository.save(user);
 
         return serviceMap.mapToResponseCollectionsMovies(collection);
     }
+
 
     public void deleteCollection(String userId, String collectionId) {
 
