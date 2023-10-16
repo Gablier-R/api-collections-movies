@@ -4,6 +4,7 @@ import br.com.collec.entity.CollectionsMovies;
 import br.com.collec.entity.User;
 import br.com.collec.payload.AllResponseDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
+import br.com.collec.payload.collectionsMovies.CollectionsResponsePage;
 import br.com.collec.payload.user.Custom;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.payload.user.UserResponsePage;
@@ -51,8 +52,6 @@ public class ServiceMap {
         return responseDTO;
     }
 
-
-
     public CollectionsResponseDTO mapToResponseCollectionsMovies(CollectionsMovies collectionsMovies){
         return new CollectionsResponseDTO(
                 collectionsMovies.getId(),
@@ -61,6 +60,19 @@ public class ServiceMap {
                 collectionsMovies.getMovies(),
                 collectionsMovies.getPublished()
         );
+    }
+
+    CollectionsResponsePage mapToResponseCollectionsPage(List<CollectionsResponseDTO> content, Page<User> usersPage) {
+
+        CollectionsResponsePage responseDTO = new CollectionsResponsePage();
+        responseDTO.setContent(content);
+        responseDTO.setPageNo(usersPage.getNumber());
+        responseDTO.setPageSize(usersPage.getSize());
+        responseDTO.setTotalElements(usersPage.getTotalElements());
+        responseDTO.setTotalPages(usersPage.getTotalPages());
+        responseDTO.setLast(usersPage.isLast());
+
+        return responseDTO;
     }
 
     public AllResponseDTO mapToResponseAllResource(List<UserResponseDTO> content, Page<User> users) {

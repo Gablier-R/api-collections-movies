@@ -1,6 +1,5 @@
 package br.com.collec.service;
 
-
 import br.com.collec.entity.User;
 import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
@@ -11,7 +10,6 @@ import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,7 +44,6 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
         return serviceMap.mapToResponseCollectionsMovies(collection);
     }
 
-
     public CollectionsResponsePage mapToPageableCollections(int pageNo, int pageSize) {
         Page<User> usersPage = userRepository.findAll(PageRequest.of(pageNo, pageSize));
 
@@ -59,24 +56,8 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
                 .map(serviceMap::mapToResponseCollectionsMovies)
                 .collect(Collectors.toList());
 
-        return mapToResponse(content, usersPage);
+        return serviceMap.mapToResponseCollectionsPage(content, usersPage);
     }
-
-    private CollectionsResponsePage mapToResponse(List<CollectionsResponseDTO> content, Page<User> usersPage) {
-
-        CollectionsResponsePage responseDTO = new CollectionsResponsePage();
-        responseDTO.setContent(content);
-        responseDTO.setPageNo(usersPage.getNumber());
-        responseDTO.setPageSize(usersPage.getSize());
-        responseDTO.setTotalElements(usersPage.getTotalElements());
-        responseDTO.setTotalPages(usersPage.getTotalPages());
-        responseDTO.setLast(usersPage.isLast());
-
-        return responseDTO;
-    }
-
-
-
 
     public CollectionsResponseDTO updateCollectionPublishedStatus(String userId, String collectionId, boolean published) {
 
@@ -102,7 +83,6 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
 
         return serviceMap.mapToResponseCollectionsMovies(collection);
     }
-
 
     public void deleteCollection(String userId, String collectionId) {
 

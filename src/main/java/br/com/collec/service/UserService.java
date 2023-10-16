@@ -9,7 +9,6 @@ import br.com.collec.payload.user.UserResponsePage;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 public record UserService(UserRepository userRepository, PasswordEncoder encoder,ServiceMap serviceMap) {
@@ -73,7 +71,6 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         );
     }
 
-
     public Custom queryAllUsersPageable(int pageNo, int pageSize) {
         Page<User> users = userRepository.findAll(PageRequest.of(pageNo, pageSize));
 
@@ -84,9 +81,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         return serviceMap.mapToResponseUserPage(content, users);
     }
 
-
     //Mets for fetch all resource
-
     public AllResponseDTO mapToPageableAllResource(int pageNo, int pageSize){
         Page<User> users = userRepository.findAll(PageRequest.of(pageNo, pageSize));
 
