@@ -1,6 +1,5 @@
 package br.com.collec.controller;
 
-import br.com.collec.payload.AllResponseDTO;
 import br.com.collec.payload.user.Custom;
 import br.com.collec.payload.user.UserDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
@@ -11,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static br.com.collec.Utils.Constants.DEFAULT_PAGE_NUMBER;
-import static br.com.collec.Utils.Constants.DEFAULT_PAGE_SIZE;
+import static br.com.collec.utils.Constants.DEFAULT_PAGE_NUMBER;
+import static br.com.collec.utils.Constants.DEFAULT_PAGE_SIZE;
 
 @RestController
 @RequestMapping("api/user")

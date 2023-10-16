@@ -1,4 +1,4 @@
-package br.com.collec.Utils;
+package br.com.collec.utils;
 
 public class Constants {
 
