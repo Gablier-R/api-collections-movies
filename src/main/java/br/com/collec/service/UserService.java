@@ -5,6 +5,7 @@ import br.com.collec.payload.user.UserDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.entity.User;
 import br.com.collec.payload.user.OnlyUserResponseDTO;
+import br.com.collec.producer.UserProducer;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +23,13 @@ public class UserService {
     final UserRepository userRepository;
     final PasswordEncoder encoder;
     final ServiceMap serviceMap;
+    final UserProducer userProducer;
 
-    public UserService(UserRepository userRepository, PasswordEncoder encoder, ServiceMap serviceMap) {
+    public UserService(UserRepository userRepository, PasswordEncoder encoder, ServiceMap serviceMap, UserProducer userProducer) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.serviceMap = serviceMap;
+        this.userProducer = userProducer;
     }
 
     public OnlyUserResponseDTO saveUser(UserDataDTO userDTO){
@@ -36,6 +39,7 @@ public class UserService {
                     "E-mail already registered");
         }
 
+        userProducer.publishMessageEmail(userDTO);
         return serviceMap.mapToResponseOnlyUser(userRepository.save(createNewUser(userDTO)));
     }
 
