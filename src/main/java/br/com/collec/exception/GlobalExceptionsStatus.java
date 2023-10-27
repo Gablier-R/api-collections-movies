@@ -13,7 +13,8 @@ import java.util.Objects;
 public class GlobalExceptionsStatus {
 
     @ExceptionHandler(ResponseStatusException.class)
-    protected ResponseEntity<Object> handlerResponseStatusException(ResponseStatusException ex){
+    protected ResponseEntity<Object> handlerResponseStatusException(ResponseStatusException ex)
+    {
         ErrorDetailsDTO error = new ErrorDetailsDTO(List.of(Objects.requireNonNull(ex.getReason())));
         return new ResponseEntity<>(error, ex.getStatusCode());
     }

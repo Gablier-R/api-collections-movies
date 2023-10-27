@@ -33,6 +33,7 @@ public class ServiceMap {
         );
     }
 
+
     public CollectionsResponseDTO mapToResponseOnlyCollectionsMovies(CollectionsMovies collectionsMovies){
         return new CollectionsResponseDTO(
                 collectionsMovies.getId(),
@@ -43,16 +44,16 @@ public class ServiceMap {
         );
     }
 
-        public static <T, U> AllResponseDTO<T> mapToResponseAll(List<T> content, Page<U> paginatedEntity) {
-            AllResponseDTO<T> responseDTO = new AllResponseDTO<>();
-            responseDTO.setContent((T) content);
-            responseDTO.setPageNo(paginatedEntity.getNumber());
-            responseDTO.setPageSize(paginatedEntity.getSize());
-            responseDTO.setTotalElements(paginatedEntity.getTotalElements());
-            responseDTO.setTotalPages(paginatedEntity.getTotalPages());
-            responseDTO.setLast(paginatedEntity.isLast());
+    public static <T, U> AllResponseDTO<T> mapToResponseAll(List<T> content, Page<U> paginatedEntity) {
+        return (AllResponseDTO<T>) new AllResponseDTO<>(
+                content,
+                paginatedEntity.getNumber(),
+                paginatedEntity.getSize(),
+                paginatedEntity.getTotalPages(),
+                paginatedEntity.getTotalElements(),
+                paginatedEntity.isLast()
+        );
+    }
 
-            return responseDTO;
-        }
 
 }

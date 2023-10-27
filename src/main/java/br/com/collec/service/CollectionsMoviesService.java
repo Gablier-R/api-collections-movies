@@ -40,6 +40,14 @@ public class CollectionsMoviesService {
                 .map(serviceMap::mapToResponseOnlyCollectionsMovies);
     }
 
+    public CollectionsResponseDTO getCollectionById(String userId, String collectionId) {
+        var user = verifyUserById(userId);
+        var collection = verifyCollection(collectionId, user);
+
+        return serviceMap.mapToResponseOnlyCollectionsMovies(collection);
+    }
+
+
 
     //Metodo pode ser alterado para somente collectionId?
     public CollectionsResponseDTO getPublishedCollectionById(String userId, String collectionId) {
@@ -112,7 +120,9 @@ public class CollectionsMoviesService {
 
         var user = verifyUserById(userId);
 
-        user.getCollectionsMovies().removeIf(collection -> collection.getId().equals(collectionId));
+        verifyCollection(collectionId, user);
+
+        user.getCollectionsMovies().removeIf(collectionDelete -> collectionDelete.getId().equals(collectionId));
 
         userRepository.save(user);
     }

@@ -10,7 +10,6 @@ public class Movies {
     @Id
     private String id = UUID.randomUUID().toString();
 
-    @JsonProperty("url")
     private String url;
 
     public Movies( String url) {

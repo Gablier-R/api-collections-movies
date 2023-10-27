@@ -39,15 +39,17 @@ public class UserController {
         return new ResponseEntity<>(userService.queryAllUsersPageable(pageNo, pageSize), HttpStatus.OK);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<OnlyUserResponseDTO> updateUserById(@PathVariable String id, @RequestBody @Valid UserDataDTO userUpdateDTO){
+        return new ResponseEntity<>(userService.updateUser(id, userUpdateDTO), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable String id){
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<OnlyUserResponseDTO> updateUserById(@PathVariable String id, @RequestBody @Valid UserDataDTO userUpdateDTO){
-        return new ResponseEntity<>(userService.updateUser(id, userUpdateDTO), HttpStatus.OK);
-    }
+
 
 }

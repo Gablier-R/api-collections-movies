@@ -5,5 +5,4 @@ public record OnlyUserResponseDTO (
         String firstName,
         String lastName,
         String email
-) {
-}
+) {}

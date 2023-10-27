@@ -30,24 +30,6 @@ public class CollectionsMoviesController {
         return new ResponseEntity<>(collectionsMoviesService.saveCollectionsInUser(userId, collectionsMoviesPatchDTO), HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<AllResponseDTO> getAllCollections(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-                                                            @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
-        return new ResponseEntity<>(collectionsMoviesService.mapToPageableCollections(pageNo, pageSize), HttpStatus.OK);
-    }
-
-    @GetMapping("/published")
-    public ResponseEntity<AllResponseDTO> getAllCollectionsPublished(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-                                                                     @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
-        return new ResponseEntity<>(collectionsMoviesService.mapToPageableCollectionsPublished(pageNo, pageSize), HttpStatus.OK);
-    }
-
-
-    @GetMapping("/{userId}/{collectionId}")
-    public ResponseEntity<CollectionsResponseDTO> getPublishedCollectionById(@PathVariable String userId, @PathVariable String collectionId) {
-        return new ResponseEntity<>(collectionsMoviesService.getPublishedCollectionById(userId, collectionId), HttpStatus.OK);
-    }
-
     @PatchMapping("/unpublish/{userId}/{collectionId}")
     public ResponseEntity<CollectionsResponseDTO> unpublishCollection(@PathVariable String userId, @PathVariable String collectionId) {
         return new ResponseEntity<>(collectionsMoviesService.updateCollectionPublishedStatus(userId, collectionId, false), HttpStatus.OK);
@@ -64,6 +46,28 @@ public class CollectionsMoviesController {
                                                                    @Valid @RequestBody CollectionsDataDTO updateRequest)
     {
         return new ResponseEntity<>(collectionsMoviesService.updateCollection(userId, collectionId, updateRequest), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<AllResponseDTO> getAllCollections(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+                                                            @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
+        return new ResponseEntity<>(collectionsMoviesService.mapToPageableCollections(pageNo, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/published")
+    public ResponseEntity<AllResponseDTO> getAllCollectionsPublished(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+                                                                     @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
+        return new ResponseEntity<>(collectionsMoviesService.mapToPageableCollectionsPublished(pageNo, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/{collectionId}")
+    public ResponseEntity<CollectionsResponseDTO> getPublishedCollectionById(@PathVariable String userId, @PathVariable String collectionId) {
+        return new ResponseEntity<>(collectionsMoviesService.getPublishedCollectionById(userId, collectionId), HttpStatus.OK);
+    }
+
+    @GetMapping("/simple/{userId}/{collectionId}")
+    public ResponseEntity<CollectionsResponseDTO> getCollectionById(@PathVariable String userId, @PathVariable String collectionId) {
+        return new ResponseEntity<>(collectionsMoviesService.getCollectionById(userId, collectionId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}/{collectionId}")
