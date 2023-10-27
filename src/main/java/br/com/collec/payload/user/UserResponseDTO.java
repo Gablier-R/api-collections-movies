@@ -1,5 +1,6 @@
 package br.com.collec.payload.user;
 
+import br.com.collec.entity.CollectionsMovies;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
 
 import java.util.List;
@@ -10,10 +11,10 @@ public class UserResponseDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private List<CollectionsResponseDTO> collectionsMovies;
+    private List<CollectionsMovies> collectionsMovies;
 
 
-    public UserResponseDTO(String id, String firstName, String lastName, String email, List<CollectionsResponseDTO> collectionsMovies) {
+    public UserResponseDTO(String id, String firstName, String lastName, String email, List<CollectionsMovies> collectionsMovies) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -53,11 +54,11 @@ public class UserResponseDTO {
         this.email = email;
     }
 
-    public List<CollectionsResponseDTO> getCollectionsMovies() {
+    public List<CollectionsMovies> getCollectionsMovies() {
         return collectionsMovies;
     }
 
-    public void setCollectionsMovies(List<CollectionsResponseDTO> collectionsMovies) {
+    public void setCollectionsMovies(List<CollectionsMovies> collectionsMovies) {
         this.collectionsMovies = collectionsMovies;
     }
 }

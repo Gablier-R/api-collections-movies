@@ -1,11 +1,10 @@
 package br.com.collec.service;
 
 import br.com.collec.payload.AllResponseDTO;
-import br.com.collec.payload.user.Custom;
 import br.com.collec.payload.user.UserDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.entity.User;
-import br.com.collec.payload.user.UserResponsePage;
+import br.com.collec.payload.user.OnlyUserResponseDTO;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,21 +17,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public record UserService(UserRepository userRepository, PasswordEncoder encoder,ServiceMap serviceMap) {
+public class UserService {
 
-    public UserResponsePage saveUser(UserDataDTO userDTO){
+    final UserRepository userRepository;
+    final PasswordEncoder encoder;
+    final ServiceMap serviceMap;
+
+    public UserService(UserRepository userRepository, PasswordEncoder encoder, ServiceMap serviceMap) {
+        this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.serviceMap = serviceMap;
+    }
+
+    public OnlyUserResponseDTO saveUser(UserDataDTO userDTO){
         if (userRepository.existsByEmail(userDTO.getEmail())){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "E-mail already registered");
         }
 
-        return serviceMap.mapToResponseUser(userRepository.save(createNewUser(userDTO)));
+        return serviceMap.mapToResponseOnlyUser(userRepository.save(createNewUser(userDTO)));
     }
 
-    public UserResponsePage getUserById(String id){
+    public OnlyUserResponseDTO getUserById(String id){
 
-        return serviceMap.mapToResponseUser(verifyUserById(id));
+        return serviceMap.mapToResponseOnlyUser(verifyUserById(id));
     }
 
     public void deleteById(String id){
@@ -45,7 +54,7 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
 
     public UserResponseDTO updateUser (String id, UserDataDTO userUpdateDTO){
 
-        return serviceMap.mapToResponseForAll(userRepository.save(update(userUpdateDTO, verifyUserById(id))));
+        return serviceMap.mapToResponseUserAndCollections(userRepository.save(update(userUpdateDTO, verifyUserById(id))));
     }
 
     private User verifyUserById(String id) {
@@ -71,14 +80,14 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         );
     }
 
-    public Custom queryAllUsersPageable(int pageNo, int pageSize) {
+    public AllResponseDTO queryAllUsersPageable(int pageNo, int pageSize) {
         Page<User> users = userRepository.findAll(PageRequest.of(pageNo, pageSize));
 
-        List<UserResponsePage> content = users.getContent().stream()
-                .map(serviceMap::mapToResponseUser)
+        List<OnlyUserResponseDTO> content = users.getContent().stream()
+                .map(serviceMap::mapToResponseOnlyUser)
                 .collect(Collectors.toList());
 
-        return serviceMap.mapToResponseUserPage(content, users);
+        return serviceMap.mapToResponseAll(content, users);
     }
 
     //Mets for fetch all resource
@@ -88,10 +97,10 @@ public record UserService(UserRepository userRepository, PasswordEncoder encoder
         List<User> listOfUser = users.getContent();
 
         List<UserResponseDTO> content = listOfUser.stream()
-                .map(serviceMap::mapToResponseForAll)
+                .map(serviceMap::mapToResponseUserAndCollections)
                 .collect(Collectors.toList());
 
-        return serviceMap.mapToResponseAllResource(content, users);
+        return serviceMap.mapToResponseAll(content, users);
 
     }
 

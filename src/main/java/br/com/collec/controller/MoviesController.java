@@ -9,8 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/movies")
-public record MoviesController(MoviesService moviesService) {
+@RequestMapping("v1/api/movies")
+public class MoviesController {
+
+    final MoviesService moviesService;
+
+    public MoviesController(MoviesService moviesService) {
+        this.moviesService = moviesService;
+    }
 
     @DeleteMapping("/{userId}/{collectionsId}/{movieId}")
     public ResponseEntity<Void> deleteMoviesById(@PathVariable String userId, @PathVariable String collectionsId, @PathVariable String movieId){

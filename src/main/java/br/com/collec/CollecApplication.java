@@ -13,8 +13,5 @@ public class CollecApplication {
 		SpringApplication.run(CollecApplication.class, args);
 	}
 
-	@Bean
-	public PasswordEncoder getPasswordEncoder(){
-		return new BCryptPasswordEncoder();
-	}
+
 }

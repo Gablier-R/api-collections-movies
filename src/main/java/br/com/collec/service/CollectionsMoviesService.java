@@ -1,11 +1,10 @@
 package br.com.collec.service;
 
 import br.com.collec.entity.User;
-import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
+import br.com.collec.payload.AllResponseDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.entity.CollectionsMovies;
-import br.com.collec.payload.collectionsMovies.CollectionsResponsePage;
-import br.com.collec.payload.collectionsMovies.CollectionsUpdateDTO;
+import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public record CollectionsMoviesService( UserRepository userRepository, ServiceMap serviceMap) {
+public class CollectionsMoviesService {
+
+    final UserRepository userRepository;
+    final ServiceMap serviceMap;
+
+    public CollectionsMoviesService(UserRepository userRepository, ServiceMap serviceMap) {
+        this.userRepository = userRepository;
+        this.serviceMap = serviceMap;
+    }
 
     public UserResponseDTO saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
 
@@ -28,7 +35,7 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
 
         User savedUser = userRepository.save(user);
 
-        return serviceMap.mapToResponseForAll(savedUser);
+        return serviceMap.mapToResponseUserAndCollections(savedUser);
     }
 
     //Metodo pode ser alterado para somente collectionId?
@@ -41,10 +48,24 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Collection is not published");
         }
 
-        return serviceMap.mapToResponseCollectionsMovies(collection);
+        return serviceMap.mapToResponseOnlyCollectionsMovies(collection);
     }
 
-    public CollectionsResponsePage mapToPageableCollections(int pageNo, int pageSize) {
+    public AllResponseDTO mapToPageableCollections(int pageNo, int pageSize) {
+        Page<User> usersPage = userRepository.findAll(PageRequest.of(pageNo, pageSize));
+
+        List<CollectionsMovies> collectionsList = usersPage.stream()
+                .flatMap(user -> user.getCollectionsMovies().stream())
+                .toList();
+
+        List<CollectionsResponseDTO> content = collectionsList.stream()
+                .map(serviceMap::mapToResponseOnlyCollectionsMovies)
+                .collect(Collectors.toList());
+
+        return ServiceMap.mapToResponseAll(content, usersPage);
+    }
+
+    public AllResponseDTO mapToPageableCollectionsPublished(int pageNo, int pageSize) {
         Page<User> usersPage = userRepository.findAll(PageRequest.of(pageNo, pageSize));
 
         List<CollectionsMovies> collectionsList = usersPage.stream()
@@ -53,10 +74,10 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
                 .toList();
 
         List<CollectionsResponseDTO> content = collectionsList.stream()
-                .map(serviceMap::mapToResponseCollectionsMovies)
+                .map(serviceMap::mapToResponseOnlyCollectionsMovies)
                 .collect(Collectors.toList());
 
-        return serviceMap.mapToResponseCollectionsPage(content, usersPage);
+        return ServiceMap.mapToResponseAll(content, usersPage);
     }
 
     public CollectionsResponseDTO updateCollectionPublishedStatus(String userId, String collectionId, boolean published) {
@@ -68,10 +89,10 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
         collectionToUpdate.setPublished(published);
         userRepository.save(user);
 
-        return serviceMap.mapToResponseCollectionsMovies(collectionToUpdate);
+        return serviceMap.mapToResponseOnlyCollectionsMovies(collectionToUpdate);
     }
 
-    public CollectionsResponseDTO updateCollection(String userId, String collectionId, CollectionsUpdateDTO updateRequest) {
+    public CollectionsResponseDTO updateCollection(String userId, String collectionId, CollectionsDataDTO updateRequest) {
         var user = verifyUserById(userId);
 
         var collection = verifyCollection(collectionId, user);
@@ -81,7 +102,7 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
 
         userRepository.save(user);
 
-        return serviceMap.mapToResponseCollectionsMovies(collection);
+        return serviceMap.mapToResponseOnlyCollectionsMovies(collection);
     }
 
     public void deleteCollection(String userId, String collectionId) {
@@ -109,7 +130,6 @@ public record CollectionsMoviesService( UserRepository userRepository, ServiceMa
         CollectionsMovies collectionsMovies = new CollectionsMovies();
         collectionsMovies.setName(collectionsMoviesPatchDTO.getName());
         collectionsMovies.setResume(collectionsMoviesPatchDTO.getResume());
-        collectionsMovies.setMovies(collectionsMoviesPatchDTO.getMovies());
         return collectionsMovies;
     }
 

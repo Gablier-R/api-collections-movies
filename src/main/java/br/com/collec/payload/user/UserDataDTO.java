@@ -25,7 +25,6 @@ public class UserDataDTO {
     @Size(min = 3, message = "first name must be greater than 3 letters")
     private String password;
 
-    private List<CollectionsMovies> collectionsMovies;
 
     public UserDataDTO(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;

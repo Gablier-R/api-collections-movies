@@ -1,13 +1,13 @@
 package br.com.collec.payload.user;
 
-public class UserResponsePage {
+public class OnlyUserResponseDTO {
 
     private String id;
     private String firstName;
     private String lastName;
     private String email;
 
-    public UserResponsePage(String id, String firstName, String lastName, String email) {
+    public OnlyUserResponseDTO(String id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

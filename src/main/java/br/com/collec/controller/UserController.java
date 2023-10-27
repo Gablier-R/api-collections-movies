@@ -1,9 +1,9 @@
 package br.com.collec.controller;
 
-import br.com.collec.payload.user.Custom;
+import br.com.collec.payload.AllResponseDTO;
 import br.com.collec.payload.user.UserDataDTO;
 import br.com.collec.payload.user.UserResponseDTO;
-import br.com.collec.payload.user.UserResponsePage;
+import br.com.collec.payload.user.OnlyUserResponseDTO;
 import br.com.collec.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,24 +14,28 @@ import static br.com.collec.utils.Constants.DEFAULT_PAGE_NUMBER;
 import static br.com.collec.utils.Constants.DEFAULT_PAGE_SIZE;
 
 @RestController
-@RequestMapping("api/user")
-public record UserController(UserService userService) {
+@RequestMapping("v1/api/user")
+public class UserController {
+
+    final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
-    public ResponseEntity<UserResponsePage> createUser(@RequestBody @Valid UserDataDTO user){
+    public ResponseEntity<OnlyUserResponseDTO> createUser(@RequestBody @Valid UserDataDTO user){
         return new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
     }
 
-
-
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponsePage>  getUserById(@PathVariable String id){
+    public ResponseEntity<OnlyUserResponseDTO>  getUserById(@PathVariable String id){
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Custom> getAllResource(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-                                                 @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
+    public ResponseEntity<AllResponseDTO> getAllResource(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+                                                         @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
         return new ResponseEntity<>(userService.queryAllUsersPageable(pageNo, pageSize), HttpStatus.OK);
     }
 

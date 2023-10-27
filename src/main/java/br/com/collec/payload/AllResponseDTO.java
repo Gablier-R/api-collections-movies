@@ -5,15 +5,15 @@ import br.com.collec.payload.user.UserResponseDTO;
 
 import java.util.List;
 
-public class AllResponseDTO {
-    private List<UserResponseDTO> content;
+public class AllResponseDTO<T> {
+    private T content;
     private int pageNo;
     private int pageSize;
     private int totalPages;
     private long totalElements;
     private boolean last;
 
-    public AllResponseDTO(List<UserResponseDTO> content, int pageNo, int pageSize, int totalPages, long totalElements, boolean last) {
+    public AllResponseDTO(T content, int pageNo, int pageSize, int totalPages, long totalElements, boolean last) {
         this.content = content;
         this.pageNo = pageNo;
         this.pageSize = pageSize;
@@ -23,13 +23,14 @@ public class AllResponseDTO {
     }
 
     public AllResponseDTO() {
+
     }
 
-    public List<UserResponseDTO> getContent() {
+    public T getContent() {
         return content;
     }
 
-    public void setContent(List<UserResponseDTO> content) {
+    public void setContent(T content) {
         this.content = content;
     }
 

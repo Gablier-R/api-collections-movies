@@ -4,35 +4,28 @@ import br.com.collec.entity.CollectionsMovies;
 import br.com.collec.entity.User;
 import br.com.collec.payload.AllResponseDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
-import br.com.collec.payload.collectionsMovies.CollectionsResponsePage;
-import br.com.collec.payload.user.Custom;
 import br.com.collec.payload.user.UserResponseDTO;
-import br.com.collec.payload.user.UserResponsePage;
+import br.com.collec.payload.user.OnlyUserResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ServiceMap {
 
-    public UserResponseDTO mapToResponseForAll(User user) {
-        List<CollectionsResponseDTO> collectionsMoviesDTOs = user.getCollectionsMovies().stream()
-                .map(this::mapToResponseCollectionsMovies)
-                .collect(Collectors.toList());
-
+    public UserResponseDTO mapToResponseUserAndCollections(User user) {
         return new UserResponseDTO(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                collectionsMoviesDTOs
+                user.getCollectionsMovies()
         );
     }
 
-    public UserResponsePage mapToResponseUser(User user) {
-        return new UserResponsePage(
+    public OnlyUserResponseDTO mapToResponseOnlyUser(User user) {
+        return new OnlyUserResponseDTO(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -40,19 +33,7 @@ public class ServiceMap {
         );
     }
 
-    public Custom mapToResponseUserPage(List<UserResponsePage> content, Page<User> users) {
-        Custom responseDTO = new Custom();
-        responseDTO.setContent(content);
-        responseDTO.setPageNo(users.getNumber());
-        responseDTO.setPageSize(users.getSize());
-        responseDTO.setTotalElements(users.getTotalElements());
-        responseDTO.setTotalPages(users.getTotalPages());
-        responseDTO.setLast(users.isLast());
-
-        return responseDTO;
-    }
-
-    public CollectionsResponseDTO mapToResponseCollectionsMovies(CollectionsMovies collectionsMovies){
+    public CollectionsResponseDTO mapToResponseOnlyCollectionsMovies(CollectionsMovies collectionsMovies){
         return new CollectionsResponseDTO(
                 collectionsMovies.getId(),
                 collectionsMovies.getName(),
@@ -62,29 +43,16 @@ public class ServiceMap {
         );
     }
 
-    CollectionsResponsePage mapToResponseCollectionsPage(List<CollectionsResponseDTO> content, Page<User> usersPage) {
+        public static <T, U> AllResponseDTO<T> mapToResponseAll(List<T> content, Page<U> paginatedEntity) {
+            AllResponseDTO<T> responseDTO = new AllResponseDTO<>();
+            responseDTO.setContent((T) content);
+            responseDTO.setPageNo(paginatedEntity.getNumber());
+            responseDTO.setPageSize(paginatedEntity.getSize());
+            responseDTO.setTotalElements(paginatedEntity.getTotalElements());
+            responseDTO.setTotalPages(paginatedEntity.getTotalPages());
+            responseDTO.setLast(paginatedEntity.isLast());
 
-        CollectionsResponsePage responseDTO = new CollectionsResponsePage();
-        responseDTO.setContent(content);
-        responseDTO.setPageNo(usersPage.getNumber());
-        responseDTO.setPageSize(usersPage.getSize());
-        responseDTO.setTotalElements(usersPage.getTotalElements());
-        responseDTO.setTotalPages(usersPage.getTotalPages());
-        responseDTO.setLast(usersPage.isLast());
-
-        return responseDTO;
-    }
-
-    public AllResponseDTO mapToResponseAllResource(List<UserResponseDTO> content, Page<User> users) {
-        AllResponseDTO responseDTO = new AllResponseDTO();
-        responseDTO.setContent(content);
-        responseDTO.setPageNo(users.getNumber());
-        responseDTO.setPageSize(users.getSize());
-        responseDTO.setTotalElements(users.getTotalElements());
-        responseDTO.setTotalPages(users.getTotalPages());
-        responseDTO.setLast(users.isLast());
-
-        return responseDTO;
-    }
+            return responseDTO;
+        }
 
 }

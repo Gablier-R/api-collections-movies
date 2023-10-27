@@ -11,7 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public record MoviesService(UserRepository userRepository, ServiceMap serviceMap) {
+public class MoviesService {
+
+    final UserRepository userRepository;
+    final ServiceMap serviceMap;
+
+    public MoviesService(UserRepository userRepository, ServiceMap serviceMap) {
+        this.userRepository = userRepository;
+        this.serviceMap = serviceMap;
+    }
 
     public CollectionsResponseDTO addMovieToCollection(String userId, String collectionId, MoviesDataDTO movieRequest) {
 
@@ -21,8 +29,9 @@ public record MoviesService(UserRepository userRepository, ServiceMap serviceMap
 
         userRepository.save(addMoviesInCollection.user());
 
-        return serviceMap.mapToResponseCollectionsMovies(addMoviesInCollection.collections);
+        return serviceMap.mapToResponseOnlyCollectionsMovies(addMoviesInCollection.collections);
     }
+
     public void deleteMovie(String userId, String collectionId, String movieId) {
 
         userAndCollection result = verifyUserAndCollection(userId, collectionId);
