@@ -25,7 +25,7 @@ public class MoviesService {
 
         userAndCollection addMoviesInCollection = verifyUserAndCollection(userId, collectionId);
 
-        addMoviesInCollection.collections.getMovies().add(new Movies(movieRequest.getUrl()));
+        addMoviesInCollection.collections.getMovies().add(new Movies(movieRequest.url()));
 
         userRepository.save(addMoviesInCollection.user());
 

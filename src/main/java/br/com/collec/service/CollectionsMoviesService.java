@@ -5,7 +5,6 @@ import br.com.collec.payload.AllResponseDTO;
 import br.com.collec.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.entity.CollectionsMovies;
 import br.com.collec.payload.collectionsMovies.CollectionsDataDTO;
-import br.com.collec.payload.user.UserResponseDTO;
 import br.com.collec.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,16 +27,19 @@ public class CollectionsMoviesService {
         this.serviceMap = serviceMap;
     }
 
-    public UserResponseDTO saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
-
+    public Optional<CollectionsResponseDTO> saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
         var user = verifyUserById(userId);
 
         user.getCollectionsMovies().add(newCollectionsMovies(collectionsMoviesPatchDTO));
 
         User savedUser = userRepository.save(user);
 
-        return serviceMap.mapToResponseUserAndCollections(savedUser);
+        return Optional.of(savedUser)
+                .map(User::getCollectionsMovies)
+                .flatMap(moviesList -> moviesList.stream().findFirst())
+                .map(serviceMap::mapToResponseOnlyCollectionsMovies);
     }
+
 
     //Metodo pode ser alterado para somente collectionId?
     public CollectionsResponseDTO getPublishedCollectionById(String userId, String collectionId) {
@@ -97,8 +100,8 @@ public class CollectionsMoviesService {
 
         var collection = verifyCollection(collectionId, user);
 
-        collection.setName(updateRequest.getName());
-        collection.setResume(updateRequest.getResume());
+        collection.setName(updateRequest.name());
+        collection.setResume(updateRequest.resume());
 
         userRepository.save(user);
 
@@ -128,8 +131,8 @@ public class CollectionsMoviesService {
 
     private static CollectionsMovies newCollectionsMovies(CollectionsDataDTO collectionsMoviesPatchDTO) {
         CollectionsMovies collectionsMovies = new CollectionsMovies();
-        collectionsMovies.setName(collectionsMoviesPatchDTO.getName());
-        collectionsMovies.setResume(collectionsMoviesPatchDTO.getResume());
+        collectionsMovies.setName(collectionsMoviesPatchDTO.name());
+        collectionsMovies.setResume(collectionsMoviesPatchDTO.resume());
         return collectionsMovies;
     }
 

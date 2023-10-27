@@ -2,6 +2,7 @@ package br.com.collec.entity;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class CollectionsMovies {
     private String id = UUID.randomUUID().toString();
     private String name;
     private String resume;
-    private List<Movies> movies;
+    private List<Movies> movies = new ArrayList<>();
     private boolean isPublished;
 
 

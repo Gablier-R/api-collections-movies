@@ -30,7 +30,7 @@ public class UserService {
     }
 
     public OnlyUserResponseDTO saveUser(UserDataDTO userDTO){
-        if (userRepository.existsByEmail(userDTO.getEmail())){
+        if (userRepository.existsByEmail(userDTO.email())){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "E-mail already registered");
@@ -52,9 +52,9 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public UserResponseDTO updateUser (String id, UserDataDTO userUpdateDTO){
+    public OnlyUserResponseDTO updateUser (String id, UserDataDTO userUpdateDTO){
 
-        return serviceMap.mapToResponseUserAndCollections(userRepository.save(update(userUpdateDTO, verifyUserById(id))));
+        return serviceMap.mapToResponseOnlyUser(userRepository.save(update(userUpdateDTO, verifyUserById(id))));
     }
 
     private User verifyUserById(String id) {
@@ -63,20 +63,20 @@ public class UserService {
     }
 
     private User update(UserDataDTO userUpdateDTO, User user) {
-        user.setFirstName(userUpdateDTO.getFirstName());
-        user.setLastName(userUpdateDTO.getLastName());
-        user.setEmail(userUpdateDTO.getEmail());
-        user.setPassword(encoder.encode(userUpdateDTO.getPassword()) );
+        user.setFirstName(userUpdateDTO.firstName());
+        user.setLastName(userUpdateDTO.lastName());
+        user.setEmail(userUpdateDTO.email());
+        user.setPassword(encoder.encode(userUpdateDTO.password()) );
 
         return user;
     }
 
     private User createNewUser(UserDataDTO user){
         return new User(
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                encoder.encode(user.getPassword())
+                user.firstName(),
+                user.lastName(),
+                user.email(),
+                encoder.encode(user.password())
         );
     }
 
