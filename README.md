@@ -2,6 +2,8 @@
 
 The Collections Movies API is a project that manages movie collections, allowing users to create, share, view, edit and delete their own collections. In addition to being able to maintain your accesses too.
 
+The idea of ​​this project is to be integrated into a mobile movie app
+
 ## Functionalities
 
 - CRUD (Create, Read, Update, Delete) for users.
