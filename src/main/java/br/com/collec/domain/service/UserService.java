@@ -1,36 +1,45 @@
 package br.com.collec.domain.service;
 
 import br.com.collec.api.payload.AllResponseDTO;
+import br.com.collec.api.payload.authentication.AuthenticationDTO;
+import br.com.collec.api.payload.authentication.LoginResponseDTO;
 import br.com.collec.api.payload.user.UserDataDTO;
 import br.com.collec.api.payload.user.UserResponseDTO;
 import br.com.collec.domain.entity.User;
 import br.com.collec.api.payload.user.OnlyUserResponseDTO;
 import br.com.collec.infra.emailService.producer.UserProducer;
 import br.com.collec.domain.repository.UserRepository;
+import br.com.collec.infra.security.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    final UserRepository userRepository;
-    final PasswordEncoder encoder;
-    final ServiceMap serviceMap;
-    final UserProducer userProducer;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    PasswordEncoder encoder;
+    @Autowired
+    ServiceMap serviceMap;
+    @Autowired
+    UserProducer userProducer;
+    @Autowired
+    TokenService tokenService;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder encoder, ServiceMap serviceMap, UserProducer userProducer) {
-        this.userRepository = userRepository;
-        this.encoder = encoder;
-        this.serviceMap = serviceMap;
-        this.userProducer = userProducer;
-    }
 
     public OnlyUserResponseDTO saveUser(UserDataDTO userDTO){
         if (userRepository.existsByEmail(userDTO.email())){
@@ -39,8 +48,15 @@ public class UserService {
                     "E-mail already registered");
         }
 
-        userProducer.publishMessageEmail(userDTO);
+        //userProducer.publishMessageEmail(userDTO);
         return serviceMap.mapToResponseOnlyUser(userRepository.save(createNewUser(userDTO)));
+    }
+
+    public LoginResponseDTO getTokenToAuthentication(AuthenticationDTO data) {
+        var userName = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        var auth = authenticationManager.authenticate(userName);
+        var token = tokenService.generateToken( (User) auth.getPrincipal());
+        return new LoginResponseDTO(token);
     }
 
     public OnlyUserResponseDTO getUserById(String id){
@@ -71,6 +87,7 @@ public class UserService {
         user.setLastName(userUpdateDTO.lastName());
         user.setEmail(userUpdateDTO.email());
         user.setPassword(encoder.encode(userUpdateDTO.password()) );
+        user.setUpdatedAt(LocalDateTime.now());
 
         return user;
     }

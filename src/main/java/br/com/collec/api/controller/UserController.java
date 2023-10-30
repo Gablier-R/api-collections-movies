@@ -5,6 +5,7 @@ import br.com.collec.api.payload.user.UserDataDTO;
 import br.com.collec.api.payload.user.OnlyUserResponseDTO;
 import br.com.collec.domain.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,8 @@ import static br.com.collec.utils.Constants.DEFAULT_PAGE_SIZE;
 @RequestMapping("v1/api/user")
 public class UserController {
 
-    final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-
+    @Autowired
+    UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<OnlyUserResponseDTO>  getUserById(@PathVariable String id){

@@ -5,6 +5,7 @@ import br.com.collec.api.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.api.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.domain.service.CollectionsMoviesService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,8 @@ import static br.com.collec.utils.Constants.DEFAULT_PAGE_SIZE;
 @RequestMapping("v1/api/collectionsMovies")
 public class CollectionsMoviesController {
 
-    final CollectionsMoviesService collectionsMoviesService;
-
-    public CollectionsMoviesController(CollectionsMoviesService collectionsMoviesService) {
-        this.collectionsMoviesService = collectionsMoviesService;
-    }
+    @Autowired
+    CollectionsMoviesService collectionsMoviesService;
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Optional<CollectionsResponseDTO>> addCollections(@PathVariable String userId, @RequestBody @Valid CollectionsDataDTO collectionsMoviesPatchDTO) {

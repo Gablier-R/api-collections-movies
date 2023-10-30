@@ -1,7 +1,5 @@
 package br.com.collec.api.controller;
 
-import br.com.collec.domain.entity.User;
-import br.com.collec.infra.security.TokenService;
 import br.com.collec.api.payload.authentication.AuthenticationDTO;
 import br.com.collec.api.payload.authentication.LoginResponseDTO;
 import br.com.collec.api.payload.user.OnlyUserResponseDTO;
@@ -11,8 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,20 +21,10 @@ public class AuthenticationController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    TokenService tokenService;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login (@RequestBody @Valid AuthenticationDTO data){
-        var userName = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        var auth = authenticationManager.authenticate(userName);
-        var token = tokenService.generateToken( (User) auth.getPrincipal());
 
-
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        return new ResponseEntity<>(userService.getTokenToAuthentication(data), HttpStatus.OK);
     }
 
     @PostMapping("/register")

@@ -2,6 +2,7 @@ package br.com.collec.domain.entity;
 
 import org.springframework.data.annotation.Id;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,10 +15,12 @@ public class CollectionsMovies {
     private String resume;
     private List<Movies> movies = new ArrayList<>();
     private boolean isPublished;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 
     public CollectionsMovies() {
-
+        this.createdAt = LocalDateTime.now();
     }
 
     public String getId() {
@@ -58,5 +61,29 @@ public class CollectionsMovies {
 
     public void setPublished(Boolean published) {
         isPublished = published;
+    }
+
+    public boolean isPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(boolean published) {
+        isPublished = published;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

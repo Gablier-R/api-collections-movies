@@ -6,12 +6,14 @@ import br.com.collec.api.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.domain.entity.CollectionsMovies;
 import br.com.collec.api.payload.collectionsMovies.CollectionsDataDTO;
 import br.com.collec.domain.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,13 +21,10 @@ import java.util.stream.Collectors;
 @Service
 public class CollectionsMoviesService {
 
-    final UserRepository userRepository;
-    final ServiceMap serviceMap;
-
-    public CollectionsMoviesService(UserRepository userRepository, ServiceMap serviceMap) {
-        this.userRepository = userRepository;
-        this.serviceMap = serviceMap;
-    }
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    ServiceMap serviceMap;
 
     public Optional<CollectionsResponseDTO> saveCollectionsInUser(String userId, CollectionsDataDTO collectionsMoviesPatchDTO) {
         var user = verifyUserById(userId);
@@ -98,6 +97,7 @@ public class CollectionsMoviesService {
         CollectionsMovies collectionToUpdate = verifyCollection(collectionId, user);
 
         collectionToUpdate.setPublished(published);
+        collectionToUpdate.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
         return serviceMap.mapToResponseOnlyCollectionsMovies(collectionToUpdate);
@@ -110,6 +110,7 @@ public class CollectionsMoviesService {
 
         collection.setName(updateRequest.name());
         collection.setResume(updateRequest.resume());
+        collection.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
 

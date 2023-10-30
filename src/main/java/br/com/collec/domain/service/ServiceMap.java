@@ -20,7 +20,9 @@ public class ServiceMap {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getCollectionsMovies()
+                user.getCollectionsMovies(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
     }
 
@@ -29,10 +31,11 @@ public class ServiceMap {
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getEmail()
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
     }
-
 
     public CollectionsResponseDTO mapToResponseOnlyCollectionsMovies(CollectionsMovies collectionsMovies){
         return new CollectionsResponseDTO(
@@ -40,7 +43,9 @@ public class ServiceMap {
                 collectionsMovies.getName(),
                 collectionsMovies.getResume(),
                 collectionsMovies.getMovies(),
-                collectionsMovies.getPublished()
+                collectionsMovies.getPublished(),
+                collectionsMovies.getCreatedAt(),
+                collectionsMovies.getUpdatedAt()
         );
     }
 

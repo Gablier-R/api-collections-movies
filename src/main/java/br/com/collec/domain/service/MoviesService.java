@@ -6,26 +6,27 @@ import br.com.collec.domain.entity.User;
 import br.com.collec.api.payload.collectionsMovies.CollectionsResponseDTO;
 import br.com.collec.api.payload.movies.MoviesDataDTO;
 import br.com.collec.domain.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+
 @Service
 public class MoviesService {
 
-    final UserRepository userRepository;
-    final ServiceMap serviceMap;
-
-    public MoviesService(UserRepository userRepository, ServiceMap serviceMap) {
-        this.userRepository = userRepository;
-        this.serviceMap = serviceMap;
-    }
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    ServiceMap serviceMap;
 
     public CollectionsResponseDTO addMovieToCollection(String userId, String collectionId, MoviesDataDTO movieRequest) {
 
         userAndCollection addMoviesInCollection = verifyUserAndCollection(userId, collectionId);
 
         addMoviesInCollection.collections.getMovies().add(new Movies(movieRequest.url()));
+        addMoviesInCollection.collections.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(addMoviesInCollection.user());
 
@@ -38,9 +39,10 @@ public class MoviesService {
 
         if (result.collections != null) {
                 result.collections.getMovies().removeIf(movie -> movie.getId().equals(movieId));
+                result.collections.setUpdatedAt(LocalDateTime.now());
                 userRepository.save(result.user());
             }
-        }
+    }
 
     private userAndCollection verifyUserAndCollection(String userId, String collectionId) {
 
