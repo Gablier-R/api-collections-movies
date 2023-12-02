@@ -15,13 +15,13 @@ import static br.com.collec.utils.Constants.DEFAULT_PAGE_SIZE;
 
 
 @RestController
-@RequestMapping("v1/api")
+@RequestMapping("/all")
 public class AllResponseController {
 
     @Autowired
     UserService userService;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<AllResponseDTO> getAllResource(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
                                                          @RequestParam( defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize){
         return new ResponseEntity<>(userService.mapToPageableAllResource(pageNo, pageSize), HttpStatus.OK);

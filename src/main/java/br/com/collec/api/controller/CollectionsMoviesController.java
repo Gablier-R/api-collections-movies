@@ -16,7 +16,7 @@ import static br.com.collec.utils.Constants.DEFAULT_PAGE_NUMBER;
 import static br.com.collec.utils.Constants.DEFAULT_PAGE_SIZE;
 
 @RestController
-@RequestMapping("v1/api/collectionsMovies")
+@RequestMapping("/collections")
 public class CollectionsMoviesController {
 
     @Autowired
