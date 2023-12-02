@@ -41,7 +41,7 @@ public class UserService {
                     "E-mail already registered");
         }
 
-        //userProducer.publishMessageEmail(userDTO);
+        userProducer.publishMessageEmail(userDTO);
         return serviceMap.mapToResponseOnlyUser(userRepository.save(createNewUser(userDTO)));
     }
 
