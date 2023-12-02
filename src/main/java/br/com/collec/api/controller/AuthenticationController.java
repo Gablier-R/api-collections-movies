@@ -1,7 +1,7 @@
 package br.com.collec.api.controller;
 
+import br.com.collec.api.payload.AllResponseDTO;
 import br.com.collec.api.payload.authentication.AuthenticationDTO;
-import br.com.collec.api.payload.authentication.LoginResponseDTO;
 import br.com.collec.api.payload.user.OnlyUserResponseDTO;
 import br.com.collec.api.payload.user.UserDataDTO;
 import br.com.collec.domain.service.UserService;
@@ -22,9 +22,9 @@ public class AuthenticationController {
     UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login (@RequestBody @Valid AuthenticationDTO data){
+    public ResponseEntity<String> login (@RequestBody @Valid AuthenticationDTO data){
 
-        return new ResponseEntity<>(userService.getTokenToAuthentication(data), HttpStatus.OK);
+        return new ResponseEntity<>(userService.authenticate(data), HttpStatus.OK);
     }
 
     @PostMapping("/register")

@@ -1,17 +1,14 @@
 package br.com.collec.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Document(collection = "user")
-public class User implements UserDetails {
+public class User{
 
     @Id
     private String id = UUID.randomUUID().toString();
@@ -25,6 +22,7 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
 
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
@@ -69,6 +67,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+
     public String getPassword() {
         return password;
     }
@@ -100,42 +99,6 @@ public class User implements UserDetails {
     public void setCollectionsMovies(List<CollectionsMovies> collectionsMovies) {
         this.collectionsMovies = collectionsMovies;
     }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-
-
-
-
 
 
 }
